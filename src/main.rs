@@ -149,6 +149,46 @@ pub struct  ExerciseStatistics {
     pub total_time: u32,
 }
 
+#[derive(Debug)]
+struct Person {
+    name: String,
+    age: usize,
+}
+
+// We implement the Default trait to use it as a fallback
+// when the provided string is not convertible into a Person object
+impl Default for Person {
+    fn default() -> Person {
+        Person {
+            name: String::from("John"),
+            age: 30,
+        }
+    }
+}
+
+impl From<&str> for Person {
+    fn from(s: &str) -> Person {
+        let default = Person::default();
+
+        if s.is_empty() {
+            return default;
+        }
+
+        let ss = s.split(',').collect::<Vec<&str>>();
+
+        if ss[0].is_empty() {
+            default
+        } else {
+            let age = ss[1].parse::<usize>().unwrap_or(default.age);
+
+            Person {
+                name: ss[0].to_string(),
+                age,
+            }
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() {
     let args: Args = argh::from_env();
